@@ -14,7 +14,7 @@ from tf2_geometry_msgs import do_transform_point
 
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/best_half_amrl.engine'
+ENGINE_FILE_PATH = './models/best_half.engine'
 
 class MainPC_GlobalSimple(Node):
     def __init__(self):
