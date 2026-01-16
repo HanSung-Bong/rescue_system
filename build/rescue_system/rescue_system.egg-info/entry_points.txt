@@ -1,0 +1,4 @@
+[console_scripts]
+main_jetson = rescue_system.main_jetson:main
+pos_est_test = rescue_system.pos_est_test:main
+webcam_pub = rescue_system.webcam_publisher:main

@@ -2,8 +2,8 @@ import tensorrt as trt
 import os
 
 # 설정
-ONNX_FILE_PATH = 'yolo11n.onnx'
-ENGINE_FILE_PATH = 'yolo11n.engine'
+ONNX_FILE_PATH = 'yolo11s.onnx'
+ENGINE_FILE_PATH = 'yolo11s.engine'
 
 # 로거 생성
 logger = trt.Logger(trt.Logger.INFO)
@@ -53,10 +53,9 @@ def build_engine():
     print(f"ℹ️ 입력 텐서 이름: {input_name}")
 
     # (Min, Opt, Max) 설정: (배치, 채널, 높이, 너비)
-    # 최소: 1장, 640x640
-    # 최적: 1장, 640x640
-    # 최대: 8장, 1280x1280 (필요시 조절)
-    profile.set_shape(input_name, (1, 3, 640, 640), (1, 3, 640, 640), (1, 3, 1280, 1280))
+    target_w = 1632
+    target_h = 1216
+    profile.set_shape(input_name, (1, 3, target_h, target_w), (1, 3, target_h, target_w), (1, 3, target_h, target_w))
     config.add_optimization_profile(profile)
 
     # 5. 엔진 빌드 및 직렬화

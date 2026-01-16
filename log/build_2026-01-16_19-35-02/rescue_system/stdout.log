@@ -1,0 +1,39 @@
+running egg_info
+creating build/rescue_system/rescue_system.egg-info
+writing build/rescue_system/rescue_system.egg-info/PKG-INFO
+writing dependency_links to build/rescue_system/rescue_system.egg-info/dependency_links.txt
+writing entry points to build/rescue_system/rescue_system.egg-info/entry_points.txt
+writing requirements to build/rescue_system/rescue_system.egg-info/requires.txt
+writing top-level names to build/rescue_system/rescue_system.egg-info/top_level.txt
+writing manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+reading manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+writing manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+copying rescue_system/pos_est_test.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+copying rescue_system/__init__.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+copying rescue_system/webcam_publisher.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+copying rescue_system/main_jetson.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+running install
+running install_lib
+creating /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/pos_est_test.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/__init__.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/webcam_publisher.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/main_jetson.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/pos_est_test.py to pos_est_test.cpython-310.pyc
+byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/webcam_publisher.py to webcam_publisher.cpython-310.pyc
+byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/main_jetson.py to main_jetson.cpython-310.pyc
+running install_data
+creating /home/hansung/kroc/src/rescue_system/install/rescue_system/share/ament_index/resource_index/packages
+copying resource/rescue_system -> /home/hansung/kroc/src/rescue_system/install/rescue_system/share/ament_index/resource_index/packages
+copying package.xml -> /home/hansung/kroc/src/rescue_system/install/rescue_system/share/rescue_system
+running install_egg_info
+Copying build/rescue_system/rescue_system.egg-info to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system-0.0.0-py3.10.egg-info
+running install_scripts
+Installing main_jetson script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+Installing pos_est_test script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+Installing webcam_pub script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+writing list of installed files to '/home/hansung/kroc/src/rescue_system/build/rescue_system/install.log'

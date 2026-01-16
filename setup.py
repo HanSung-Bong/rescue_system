@@ -19,12 +19,13 @@ setup(
     license='TODO: License declaration',
     extras_require={
         'test': [
-            'pytest',
+            'pytest',   
         ],
     },
     entry_points={
-        'console_scripts': ['main_pc = rescue_system.main_pc:main',
+        'console_scripts': ['main_jetson = rescue_system.main_jetson:main',
                             'webcam_pub = rescue_system.webcam_publisher:main',
+                            'pos_est_test = rescue_system.pos_est_test:main'
         ],
 
     },

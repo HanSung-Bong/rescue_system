@@ -1,0 +1,41 @@
+[0.305s] Invoking command in '/home/hansung/kroc/src/rescue_system': CONDA_PROMPT_MODIFIER=(kroc) PYTHONPATH=/home/hansung/kroc/src/rescue_system/build/rescue_system/prefix_override:/home/hansung/miniconda3/envs/kroc/lib/python3.10/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages:${PYTHONPATH} /home/hansung/miniconda3/envs/kroc/bin/python3.10 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/rescue_system build --build-base /home/hansung/kroc/src/rescue_system/build/rescue_system/build install --record /home/hansung/kroc/src/rescue_system/build/rescue_system/install.log --single-version-externally-managed install_data
+[0.415s] running egg_info
+[0.420s] creating build/rescue_system/rescue_system.egg-info
+[0.420s] writing build/rescue_system/rescue_system.egg-info/PKG-INFO
+[0.420s] writing dependency_links to build/rescue_system/rescue_system.egg-info/dependency_links.txt
+[0.420s] writing entry points to build/rescue_system/rescue_system.egg-info/entry_points.txt
+[0.420s] writing requirements to build/rescue_system/rescue_system.egg-info/requires.txt
+[0.420s] writing top-level names to build/rescue_system/rescue_system.egg-info/top_level.txt
+[0.420s] writing manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+[0.431s] reading manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+[0.431s] writing manifest file 'build/rescue_system/rescue_system.egg-info/SOURCES.txt'
+[0.431s] running build
+[0.431s] running build_py
+[0.432s] creating /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+[0.432s] copying rescue_system/pos_est_test.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+[0.432s] copying rescue_system/__init__.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+[0.432s] copying rescue_system/webcam_publisher.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+[0.432s] copying rescue_system/main_jetson.py -> /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system
+[0.432s] running install
+[0.434s] running install_lib
+[0.439s] creating /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+[0.439s] copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/pos_est_test.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+[0.439s] copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/__init__.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+[0.439s] copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/webcam_publisher.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+[0.439s] copying /home/hansung/kroc/src/rescue_system/build/rescue_system/build/lib/rescue_system/main_jetson.py -> /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system
+[0.439s] byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/pos_est_test.py to pos_est_test.cpython-310.pyc
+[0.440s] byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/__init__.py to __init__.cpython-310.pyc
+[0.440s] byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/webcam_publisher.py to webcam_publisher.cpython-310.pyc
+[0.440s] byte-compiling /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system/main_jetson.py to main_jetson.cpython-310.pyc
+[0.441s] running install_data
+[0.441s] creating /home/hansung/kroc/src/rescue_system/install/rescue_system/share/ament_index/resource_index/packages
+[0.441s] copying resource/rescue_system -> /home/hansung/kroc/src/rescue_system/install/rescue_system/share/ament_index/resource_index/packages
+[0.441s] copying package.xml -> /home/hansung/kroc/src/rescue_system/install/rescue_system/share/rescue_system
+[0.441s] running install_egg_info
+[0.447s] Copying build/rescue_system/rescue_system.egg-info to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages/rescue_system-0.0.0-py3.10.egg-info
+[0.447s] running install_scripts
+[0.487s] Installing main_jetson script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+[0.487s] Installing pos_est_test script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+[0.487s] Installing webcam_pub script to /home/hansung/kroc/src/rescue_system/install/rescue_system/lib/rescue_system
+[0.488s] writing list of installed files to '/home/hansung/kroc/src/rescue_system/build/rescue_system/install.log'
+[0.500s] Invoked command in '/home/hansung/kroc/src/rescue_system' returned '0': CONDA_PROMPT_MODIFIER=(kroc) PYTHONPATH=/home/hansung/kroc/src/rescue_system/build/rescue_system/prefix_override:/home/hansung/miniconda3/envs/kroc/lib/python3.10/site-packages/colcon_core/task/python/colcon_distutils_commands:/home/hansung/kroc/src/rescue_system/install/rescue_system/lib/python3.10/site-packages:${PYTHONPATH} /home/hansung/miniconda3/envs/kroc/bin/python3.10 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/rescue_system build --build-base /home/hansung/kroc/src/rescue_system/build/rescue_system/build install --record /home/hansung/kroc/src/rescue_system/build/rescue_system/install.log --single-version-externally-managed install_data

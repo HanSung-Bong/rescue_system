@@ -45,7 +45,7 @@ class YoloTRT:
                 except Exception as e:
                     print(f"Warn: Failed to read profile for {name}, utilizing feedback ({e})")
                     if is_input:
-                        real_shape = [1,3,1280,1280]
+                        real_shape = [1,3,1640,1232]
                     else:
                         real_shape = [1,84,33600]
             else:
@@ -81,13 +81,22 @@ class YoloTRT:
 
     def preprocess(self, img):
         """
-        입력 이미지(640x720 BGR)를 YOLO 입력 포맷(1280x1280 RGB, Normalized)으로 변환
+        Resize 대신 Center Crop 수행
         """
-        # 1. Resize
-        img_resized = cv2.resize(img, (self.input_w, self.input_h))
+        # 1. Center Crop 계산 (Resizing 아님)
+        # 들어오는 이미지(1640x1232) -> 모델 입력(1632x1216)
+        orig_h, orig_w, _ = img.shape
+        
+        # 잘라낼 시작점 계산 (중앙 정렬)
+        x_start = (orig_w - self.input_w) // 2  # (1640-1632)/2 = 4
+        y_start = (orig_h - self.input_h) // 2  # (1232-1216)/2 = 8
+        
+        # [수정] 이미지 크롭 (Slicing)
+        img_cropped = img[y_start : y_start + self.input_h, 
+                          x_start : x_start + self.input_w]
         
         # 2. BGR -> RGB
-        img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
+        img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
         
         # 3. HWC -> CHW 변환 및 정규화 (0~1)
         img_transposed = img_rgb.transpose((2, 0, 1)).astype(np.float32) / 255.0
@@ -108,17 +117,17 @@ class YoloTRT:
         confidences = []
         class_ids = []
         
-        # 원본 이미지 크기에 맞춰 스케일링 비율 계산
         orig_h, orig_w = original_shape[:2]
-        scale_x = orig_w / self.input_w
-        scale_y = orig_h / self.input_h
 
-        # 신뢰도 임계값 (Threshold)
+        # [수정] 스케일링 비율(Scale) 대신 오프셋(Offset) 계산
+        # 전처리 때 잘라낸 만큼(4px, 8px) 더해줘야 함
+        offset_x = (orig_w - self.input_w) // 2
+        offset_y = (orig_h - self.input_h) // 2
+
         CONF_THRESH = 0.4
         
         rows = output.shape[0]
         for i in range(rows):
-            # [cx, cy, w, h, class_score_1, class_score_2, ...]
             classes_scores = output[i, 4:]
             class_id = np.argmax(classes_scores)
             confidence = classes_scores[class_id]
@@ -126,17 +135,22 @@ class YoloTRT:
             if confidence > CONF_THRESH:
                 cx, cy, w, h = output[i, 0], output[i, 1], output[i, 2], output[i, 3]
                 
-                # 좌표 복원 (1280 기준 -> 640 원본 기준)
-                left = int((cx - w/2) * scale_x)
-                top = int((cy - h/2) * scale_y)
-                width = int(w * scale_x)
-                height = int(h * scale_y)
+                # [수정] 좌표 복원: 비율 곱하기가 아니라 오프셋 더하기
+                # 모델이 본 좌표 (Crop 기준) + 잘려나간 여백 (Offset)
+                center_x_real = cx + offset_x
+                center_y_real = cy + offset_y
+                
+                # 좌상단 좌표 계산
+                left = int(center_x_real - w/2)
+                top = int(center_y_real - h/2)
+                width = int(w)  # Resizing을 안 했으므로 크기는 그대로
+                height = int(h) # Resizing을 안 했으므로 크기는 그대로
                 
                 boxes.append([left, top, width, height])
                 confidences.append(float(confidence))
                 class_ids.append(class_id)
         
-        # NMS (Non-Maximum Suppression) - 중복 박스 제거
+        # NMS (Non-Maximum Suppression)
         indices = cv2.dnn.NMSBoxes(boxes, confidences, CONF_THRESH, 0.45)
         
         results = []
@@ -144,12 +158,11 @@ class YoloTRT:
             for i in indices.flatten():
                 results.append({
                     "class_id": class_ids[i],
-                    "bbox": boxes[i], # [x, y, w, h]
+                    "bbox": boxes[i], # [x, y, w, h] (원본 해상도 기준)
                     "conf": confidences[i]
                 })
         
         return results
-
     def inference(self, raw_img):   
         """
         외부에서 호출하는 메인 함수
