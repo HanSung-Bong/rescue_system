@@ -27,7 +27,7 @@ class MainPC_GlobalSimple(Node):
         # --- [Parameter] ---
         self.declare_parameter('enable_yolo', True)
         self.declare_parameter('enable_pos', True)
-        self.declare_parameter('target_frame', 'ned') # 변환할 절대 좌표계 이름 (map 또는 odom)
+        self.declare_parameter('target_frame', 'odom') # 변환할 절대 좌표계 이름 (map 또는 odom)
         
         # 기존 파라미터들...
         self.declare_parameter('camera_offset_x', 0.1)

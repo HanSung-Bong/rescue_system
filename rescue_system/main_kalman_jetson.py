@@ -76,7 +76,7 @@ class MainPC_GlobalKF(Node):
         
         self.declare_parameter('enable_yolo', True)
         self.declare_parameter('enable_pos', True)
-        self.declare_parameter('target_frame', 'ned')
+        self.declare_parameter('target_frame', 'odom')
         
         self.declare_parameter('camera_offset_x', 0.1)
         self.declare_parameter('camera_offset_y', 0.0)
