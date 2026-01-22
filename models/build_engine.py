@@ -2,8 +2,8 @@ import tensorrt as trt
 import os
 
 # 설정
-ONNX_FILE_PATH = 'yolo11s.onnx'
-ENGINE_FILE_PATH = 'yolo11s.engine'
+ONNX_FILE_PATH = 'best_half.onnx'
+ENGINE_FILE_PATH = 'best_half.engine'
 
 # 로거 생성
 logger = trt.Logger(trt.Logger.INFO)

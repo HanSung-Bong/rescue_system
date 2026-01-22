@@ -10,7 +10,7 @@ import math
 # YOLO 모듈 임포트
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/yolo11s.engine'
+ENGINE_FILE_PATH = './models/best_half.engine'
 
 class MainPC(Node):
     def __init__(self):
@@ -39,7 +39,7 @@ class MainPC(Node):
 
         # --- [Publisher & Subscriber] ---
         self.subscription = self.create_subscription(
-            Image, '/camera/image_raw', self.image_callback, 10)
+            Image, '/image_raw', self.image_callback, 10)
             
         # [수정] 카메라 기준 좌표를 발행 (토픽 이름 변경: cam_pose)
         self.cam_pose_publisher = self.create_publisher(PointStamped, '/rescue/target_pose_cam', 10)
@@ -61,6 +61,8 @@ class MainPC(Node):
             # 1. YOLO 추론
             if self.run_yolo:
                 detections = self.yolo_model.inference(full_image) 
+            
+            self.get_logger().info(f"Detections: {detections}")
 
             # 2. 위치 추정 (Camera Frame)
             if self.run_pos and self.run_yolo:
