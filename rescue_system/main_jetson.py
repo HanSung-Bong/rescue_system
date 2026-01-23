@@ -30,9 +30,9 @@ class MainPC_GlobalSimple(Node):
         self.declare_parameter('target_frame', 'odom') # 변환할 절대 좌표계 이름 (map 또는 odom)
         
         # 기존 파라미터들...
-        self.declare_parameter('camera_offset_x', 0.0)
-        self.declare_parameter('camera_offset_y', 0.0)
-        self.declare_parameter('camera_offset_z', 0.0)
+        self.declare_parameter('camera_offset_x', 0.0)  #
+        self.declare_parameter('camera_offset_y', 0.0)  #
+        self.declare_parameter('camera_offset_z', 0.0)  #
 
         self.run_yolo = self.get_parameter('enable_yolo').value
         self.run_pos = self.get_parameter('enable_pos').value
@@ -45,8 +45,12 @@ class MainPC_GlobalSimple(Node):
         # --- [각도 설정] ---
         self.ANGLE_FAR = 30.0   
         self.ANGLE_CLOSE = 70.0 
-        self.current_tilt_deg = self.ANGLE_FAR 
-        self.update_trig_values(self.current_tilt_deg)
+        self.current_tilt_deg = self.ANGLE_FAR
+        #아래는 현재 70도로 고정(변환 로직으로 변환시 update_trig_values 활성화)
+        self.rad = math.radians(self.ANGLE_CLOSE)
+        self.sin_tilt = math.sin(self.rad)
+        self.cos_tilt = math.cos(self.rad)
+        #self.update_trig_values(self.current_tilt_deg)
 
         # 카메라 스펙 (IMX219)
         self.IMG_WIDTH = 1640
@@ -75,10 +79,10 @@ class MainPC_GlobalSimple(Node):
         self.publish_gimbal_cmd(self.current_tilt_deg)
         self.get_logger().info(f"Simple Global Node Ready! Target Frame: {self.target_frame}")
 
-    def update_trig_values(self, degree):
-        rad = math.radians(degree)
-        self.sin_tilt = math.sin(rad)
-        self.cos_tilt = math.cos(rad)
+    #def update_trig_values(self, degree):
+    #    rad = math.radians(degree)
+    #    self.sin_tilt = math.sin(rad)
+    #    self.cos_tilt = math.cos(rad)
 
     def publish_gimbal_cmd(self, angle):
         msg = Bool()
