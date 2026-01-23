@@ -136,8 +136,8 @@ class MainPC_GlobalSimple(Node):
                         y_cam = (cy - self.CY) * z_cam / self.FOCAL_LENGTH
                         
                         x_body = (z_cam * self.cos_tilt) - (y_cam * self.sin_tilt) + self.offset_x
-                        y_body = -x_cam + self.offset_y
-                        z_body = -(z_cam * self.sin_tilt) - (y_cam * self.cos_tilt) + self.offset_z
+                        y_body = x_cam + self.offset_y
+                        z_body = (z_cam * self.sin_tilt) + (y_cam * self.cos_tilt) + self.offset_z
 
                         # 2. PointStamped 생성 (base_link 기준)
                         point_body = PointStamped()
