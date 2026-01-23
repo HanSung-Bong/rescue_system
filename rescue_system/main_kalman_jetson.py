@@ -14,7 +14,7 @@ from tf2_geometry_msgs import do_transform_point
 
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/best_half.engine'
+ENGINE_FILE_PATH = './models/best_half_amrl.engine'
 
 # --- [Kalman Filter Class] ---
 class StaticKalmanFilter:
@@ -100,7 +100,7 @@ class MainPC_GlobalKF(Node):
         self.FOCAL_LENGTH = 1321.4
         
         self.subscription = self.create_subscription(
-            Image, '/camera/image_raw', self.image_callback, 10)
+            Image, '/image_raw', self.image_callback, 10)
         
         # [KF] 필터링된 좌표 발행
         self.kf_pose_publisher = self.create_publisher(PointStamped, '/rescue/target_pose_global_kf', 10)

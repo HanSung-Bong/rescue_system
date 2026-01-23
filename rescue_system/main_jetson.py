@@ -14,7 +14,7 @@ from tf2_geometry_msgs import do_transform_point
 
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/best_half.engine'
+ENGINE_FILE_PATH = './models/best_half_amrl.engine'
 
 class MainPC_GlobalSimple(Node):
     def __init__(self):
@@ -30,9 +30,9 @@ class MainPC_GlobalSimple(Node):
         self.declare_parameter('target_frame', 'odom') # 변환할 절대 좌표계 이름 (map 또는 odom)
         
         # 기존 파라미터들...
-        self.declare_parameter('camera_offset_x', 0.1)
+        self.declare_parameter('camera_offset_x', 0.0)
         self.declare_parameter('camera_offset_y', 0.0)
-        self.declare_parameter('camera_offset_z', -0.05)
+        self.declare_parameter('camera_offset_z', 0.0)
 
         self.run_yolo = self.get_parameter('enable_yolo').value
         self.run_pos = self.get_parameter('enable_pos').value
@@ -55,7 +55,7 @@ class MainPC_GlobalSimple(Node):
         self.V_FOV_HALF_RAD = math.atan((self.IMG_HEIGHT / 2.0) / self.FOCAL_LENGTH)
 
         self.subscription = self.create_subscription(
-            Image, '/image_raw', self.image_callback, 10)
+            Image, '/camera/cam70/image', self.image_callback, 10)
         
         # [수정] 토픽 이름 변경 (Global)
         self.global_pose_publisher = self.create_publisher(PointStamped, '/rescue/target_pose_global', 10)
@@ -147,13 +147,17 @@ class MainPC_GlobalSimple(Node):
                         point_body.point.y = float(y_body)
                         point_body.point.z = float(z_body)
 
+                        self.get_logger().info(
+                            f"Cam Pos -> X: {x_cam:.2f}m, Y: {y_cam:.2f}m, Depth(Z): {z_cam:.2f}m"
+                        )
+
                         # 3. TF 변환 (base_link -> map)
                         try:
                             image_time = rclpy.time.Time.from_msg(msg.header.stamp)
                             transform = self.tf_buffer.lookup_transform(
                                 self.target_frame, 
                                 "base_link",             
-                                image_time,
+                                rclpy.time.Time(),
                                 timeout=rclpy.duration.Duration(seconds=0.1)
                             )
                             

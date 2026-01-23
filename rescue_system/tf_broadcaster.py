@@ -4,14 +4,12 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPo
 from px4_msgs.msg import VehicleOdometry
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
-import numpy as np
 
 class PX4TFBroadcaster(Node):
     def __init__(self):
         super().__init__('px4_tf_broadcaster')
 
-        # --- [QoS 설정: 매우 중요] ---
-        # PX4는 Best Effort로 보내므로, 받는 쪽도 Best Effort여야 데이터가 들어옵니다.
+        # [중요] QoS 설정 (PX4와 통신하기 위한 필수 설정)
         qos_profile = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.TRANSIENT_LOCAL,
@@ -19,58 +17,53 @@ class PX4TFBroadcaster(Node):
             depth=1
         )
 
-        # PX4 Odometry 구독 (토픽 이름 확인 필요: /fmu/out/vehicle_odometry)
+        # 토픽 구독
         self.subscription = self.create_subscription(
             VehicleOdometry,
             '/fmu/out/vehicle_odometry',
             self.listener_callback,
             qos_profile
         )
-
-        # TF 방송기 생성
+        
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.get_logger().info("PX4 TF Broadcaster Started (NED -> ENU)")
+        self.get_logger().info("PX4 TF Broadcaster Started... Waiting for Odometry data...")
 
     def listener_callback(self, msg):
         t = TransformStamped()
 
-        # 1. 헤더 설정
-        # timestamp는 PX4 시간을 ROS 시간으로 변환해서 써야 하지만, 
-        # 간단하게 현재 ROS 시간으로 동기화하거나 msg.timestamp를 변환해야 함.
-        # 여기서는 시스템의 현재 시간을 사용하여 TF 트리의 끊김을 방지합니다.
-        t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = 'odom'       # 부모 프레임 (절대 좌표)
-        t.child_frame_id = 'base_link'   # 자식 프레임 (드론 몸체)
+        # --- [핵심 해결책: 시간 동기화] ---
+        # 시스템 시간(get_clock)을 쓰지 않고, PX4 메시지의 시간을 그대로 사용합니다.
+        # PX4 msg.timestamp는 마이크로초(us) 단위입니다.
+        # 이를 ROS Time(초, 나노초)으로 변환합니다.
+        
+        # Gazebo 환경에서는 PX4 시간과 ROS Sim Time이 거의 일치합니다.
+        timestamp_sec = int(msg.timestamp / 1000000)
+        timestamp_nanosec = int((msg.timestamp % 1000000) * 1000)
 
-        # 2. 좌표 변환 (PX4 NED -> ROS ENU)
-        # Position:
-        # ROS X (East)  = PX4 Y (East)
-        # ROS Y (North) = PX4 X (North)
-        # ROS Z (Up)    = -PX4 Z (Down)
+        t.header.stamp.sec = timestamp_sec
+        t.header.stamp.nanosec = timestamp_nanosec
         
-        t.transform.translation.x = float(msg.position[1]) 
-        t.transform.translation.y = float(msg.position[0])
-        t.transform.translation.z = -float(msg.position[2])
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_link'
 
-        # Rotation (Quaternion):
-        # 쿼터니언 변환도 필요합니다. (NED -> ENU)
-        # q_ned = [w, x, y, z] (PX4 순서 주의: 보통 [w, x, y, z] 혹은 [x, y, z, w])
-        # px4_msgs의 VehicleOdometry q는 float32[4] q (usually w, x, y, z format in PX4 internal, but check msg definition)
-        # PX4 1.14 기준 q는 [w, x, y, z] 순서입니다.
-        
-        # 간단한 변환 공식:
-        # x_enu = y_ned
-        # y_enu = x_ned
-        # z_enu = -z_ned
-        # w_enu = w_ned
-        
-        t.transform.rotation.x = float(msg.q[2])
-        t.transform.rotation.y = float(msg.q[1])
-        t.transform.rotation.z = -float(msg.q[3])
+        # 1. Position (NED -> ENU)
+        # PX4 (X:North, Y:East, Z:Down) -> ROS (X:East, Y:North, Z:Up)
+        # NED -> NED (변환 없이 그대로 매핑)
+        t.transform.translation.x = float(msg.position[0]) # North -> X
+        t.transform.translation.y = float(msg.position[1]) # East -> Y
+        t.transform.translation.z = float(msg.position[2]) # Down -> Z
+
+        # Rotation (NED 그대로)
+        t.transform.rotation.x = float(msg.q[1])
+        t.transform.rotation.y = float(msg.q[2])
+        t.transform.rotation.z = float(msg.q[3])
         t.transform.rotation.w = float(msg.q[0])
 
-        # 3. 방송 (Broadcast)
+        # TF 발행
         self.tf_broadcaster.sendTransform(t)
+        
+        # [디버깅용] 데이터가 잘 나가는지 1초에 한 번 정도만 로그 출력 (선택 사항)
+        # self.get_logger().info(f"Published TF at time: {timestamp_sec}.{timestamp_nanosec}", throttle_duration_sec=1.0)
 
 def main(args=None):
     rclpy.init(args=args)
