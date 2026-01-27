@@ -14,7 +14,7 @@ from tf2_geometry_msgs import do_transform_point
 
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/best_half_amrl.engine'
+ENGINE_FILE_PATH = './models/best_half.engine'
 
 class MainPC_GlobalSimple(Node):
     def __init__(self):
@@ -47,11 +47,7 @@ class MainPC_GlobalSimple(Node):
         self.ANGLE_FAR = 30.0   
         self.ANGLE_CLOSE = 70.0 
         self.current_tilt_deg = self.ANGLE_FAR
-        #아래는 현재 70도로 고정(변환 로직으로 변환시 update_trig_values 활성화)
-        self.rad = math.radians(self.ANGLE_CLOSE)
-        self.sin_tilt = math.sin(self.rad)
-        self.cos_tilt = math.cos(self.rad)
-        #self.update_trig_values(self.current_tilt_deg)
+        self.update_trig_values(self.current_tilt_deg)
 
         # 카메라 스펙 (IMX219)
         self.IMG_WIDTH = 1640
@@ -60,7 +56,7 @@ class MainPC_GlobalSimple(Node):
         self.V_FOV_HALF_RAD = math.atan((self.IMG_HEIGHT / 2.0) / self.FOCAL_LENGTH)
 
         self.subscription = self.create_subscription(
-            Image, '/camera/cam70/image', self.image_callback, 10)
+            Image, '/image_raw', self.image_callback, 10)
         
         # [수정] 토픽 이름 변경 (Global)
         self.global_pose_publisher = self.create_publisher(PointStamped, '/rescue/target_pose_global', 10)
@@ -80,10 +76,10 @@ class MainPC_GlobalSimple(Node):
         self.publish_gimbal_cmd(self.current_tilt_deg)
         self.get_logger().info(f"Simple Global Node Ready! Target Frame: {self.target_frame}")
 
-    #def update_trig_values(self, degree):
-    #    rad = math.radians(degree)
-    #    self.sin_tilt = math.sin(rad)
-    #    self.cos_tilt = math.cos(rad)
+    def update_trig_values(self, degree):
+       rad = math.radians(degree)
+       self.sin_tilt = math.sin(rad)
+       self.cos_tilt = math.cos(rad)
 
     def publish_gimbal_cmd(self, angle):
         msg = Bool()
@@ -101,9 +97,9 @@ class MainPC_GlobalSimple(Node):
         if abs(self.current_tilt_deg - self.ANGLE_FAR) < 1.0:
             if cy > self.IMG_HEIGHT * 0.8: 
                 target_angle = self.ANGLE_CLOSE
-        elif abs(self.current_tilt_deg - self.ANGLE_CLOSE) < 1.0:
-            if cy < self.IMG_HEIGHT * 0.2: 
-                target_angle = self.ANGLE_FAR
+        # elif abs(self.current_tilt_deg - self.ANGLE_CLOSE) < 1.0:
+        #     if cy < self.IMG_HEIGHT * 0.2: 
+        #         target_angle = self.ANGLE_FAR
 
         if target_angle is not None:
             self.current_tilt_deg = target_angle
@@ -123,7 +119,7 @@ class MainPC_GlobalSimple(Node):
                 target_obj = None
                 max_conf = 0.0
                 for obj in detections:
-                    if obj['conf'] > 0.5 and obj['conf'] > max_conf:
+                    if obj['conf'] > 0.6 and obj['conf'] > max_conf:
                         max_conf = obj['conf']
                         target_obj = obj
                 
@@ -132,6 +128,16 @@ class MainPC_GlobalSimple(Node):
                     cx, cy = int(x + w/2), int(y + h/2)
 
                     self.check_safety_and_switch(cy)
+
+                    margin = 0.2 
+                    x_min = self.IMG_WIDTH * margin
+                    x_max = self.IMG_WIDTH * (1.0 - margin)
+                    y_min = self.IMG_HEIGHT * margin
+                    y_max = self.IMG_HEIGHT * (1.0 - margin)
+
+                    # cx, cy가 중앙 박스를 벗어나면 여기서 리턴 (좌표 발행 X)
+                    if not (x_min < cx < x_max and y_min < cy < y_max):
+                        return
 
                     # 1. Body Frame 좌표 계산
                     pixel_size = max(w, h)

@@ -3,7 +3,7 @@ import os
 
 # 설정
 ONNX_FILE_PATH = 'best_half.onnx'
-ENGINE_FILE_PATH = 'best_half_amrl.engine'
+ENGINE_FILE_PATH = 'best_half_bong.engine'
 
 # 로거 생성
 logger = trt.Logger(trt.Logger.INFO)
