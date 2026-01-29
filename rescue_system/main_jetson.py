@@ -119,7 +119,7 @@ class MainPC_GlobalSimple(Node):
                 target_obj = None
                 max_conf = 0.0
                 for obj in detections:
-                    if obj['conf'] > 0.6 and obj['conf'] > max_conf:
+                    if obj['conf'] > 0.7 and obj['conf'] > max_conf:
                         max_conf = obj['conf']
                         target_obj = obj
                 
