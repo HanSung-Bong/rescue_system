@@ -14,7 +14,8 @@ from tf2_geometry_msgs import do_transform_point
 
 from .modules.yolo_wrapper import YoloTRT
 
-ENGINE_FILE_PATH = './models/best_half.engine'
+# ENGINE_FILE_PATH = './models/best_half.engine'
+ENGINE_FILE_PATH = './models/snow_half.engine'
 
 class MainPC_GlobalSimple(Node):
     def __init__(self):
@@ -31,9 +32,9 @@ class MainPC_GlobalSimple(Node):
         
         # 기존 파라미터들...
         #드론에서 카메라까지의 ned
-        self.declare_parameter('camera_offset_x', 0.0)  #0.177
+        self.declare_parameter('camera_offset_x', 0.177)  #0.177
         self.declare_parameter('camera_offset_y', 0.0)  #0
-        self.declare_parameter('camera_offset_z', 0.0)  #0.267
+        self.declare_parameter('camera_offset_z', 0.267)  #0.267
 
         self.run_yolo = self.get_parameter('enable_yolo').value
         self.run_pos = self.get_parameter('enable_pos').value
@@ -67,7 +68,7 @@ class MainPC_GlobalSimple(Node):
         
         self.CX = self.IMG_WIDTH / 2.0
         self.CY = self.IMG_HEIGHT / 2.0
-        self.TARGET_REAL_SIZE = 1.0 
+        self.TARGET_REAL_SIZE = 0.8
 
         if self.run_yolo:
             self.get_logger().info("Loading YOLO Engine...")
@@ -93,9 +94,9 @@ class MainPC_GlobalSimple(Node):
         dy = cy - self.CY
         #obj_pixel_angle_deg = math.degrees(math.atan2(dy, self.FOCAL_LENGTH))
         target_angle = None
-        
+        print(cy)
         if abs(self.current_tilt_deg - self.ANGLE_FAR) < 1.0:
-            if cy > self.IMG_HEIGHT * 0.8: 
+            if cy > self.IMG_HEIGHT * 0.7: 
                 target_angle = self.ANGLE_CLOSE
         # elif abs(self.current_tilt_deg - self.ANGLE_CLOSE) < 1.0:
         #     if cy < self.IMG_HEIGHT * 0.2: 
@@ -114,22 +115,28 @@ class MainPC_GlobalSimple(Node):
                 detections = self.yolo_model.inference(full_image)
 
             if self.run_pos and self.run_yolo:
-                if not detections: return
+                if not detections: 
+                    return
 
                 target_obj = None
                 max_conf = 0.0
                 for obj in detections:
-                    if obj['conf'] > 0.7 and obj['conf'] > max_conf:
+                    x, y, w, h = obj['bbox']
+                    cx, cy = int(x + w/2), int(y + h/2)
+                    print(f"cx: {cx/self.IMG_WIDTH}\ncy: {cy/self.IMG_HEIGHT}")
+                    print(f"Confidence: {obj['conf']}")
+                    if obj['conf'] > 0.66 and obj['conf'] > max_conf:
                         max_conf = obj['conf']
                         target_obj = obj
                 
                 if target_obj:
                     x, y, w, h = target_obj['bbox']
                     cx, cy = int(x + w/2), int(y + h/2)
-
+                    print(f"cx: {cx/self.IMG_WIDTH}\ncy: {cy/self.IMG_HEIGHT}")
+                    print(f"Confidence: {target_obj['conf']}")
                     self.check_safety_and_switch(cy)
 
-                    margin = 0.2 
+                    margin = 0.12 
                     x_min = self.IMG_WIDTH * margin
                     x_max = self.IMG_WIDTH * (1.0 - margin)
                     y_min = self.IMG_HEIGHT * margin

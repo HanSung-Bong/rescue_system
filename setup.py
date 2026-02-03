@@ -27,7 +27,8 @@ setup(
                             'webcam_pub = rescue_system.webcam_publisher:main',
                             'pos_est_test = rescue_system.pos_est_test:main',
                             'tf_broadcaster = rescue_system.tf_broadcaster:main ',
-                            'camera = rescue_system.camera_node:main'
+                            'camera = rescue_system.camera_node:main',
+                            'kalman = rescue_system.main_kalman_jetson:main',
         ],
 
     },

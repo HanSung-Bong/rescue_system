@@ -2,12 +2,10 @@ import tensorrt as trt
 import os
 
 # 설정
-ONNX_FILE_PATH = 'best_half.onnx'
-<<<<<<< HEAD
-ENGINE_FILE_PATH = 'best_half.engine'
-=======
-ENGINE_FILE_PATH = 'best_half.engine'
->>>>>>> 78d006a10027337e3d9787001d8bea67c6155b36
+# ONNX_FILE_PATH = 'best_half.onnx'
+# ENGINE_FILE_PATH = 'best_half.engine'
+ONNX_FILE_PATH = 'snow.onnx'
+ENGINE_FILE_PATH = 'snow_half.engine'
 
 # 로거 생성
 logger = trt.Logger(trt.Logger.INFO)
